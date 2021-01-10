@@ -6,13 +6,10 @@ from .models import MovieInfo
 from .serializers import MovieInfoSerializer
 
 
-# Create your views here.
-
-
 class MovieInfoFilter(filters.FilterSet):
     class Meta:
         model = MovieInfo
-        fields = '__all__'
+        fields = "__all__"
 
 
 class MovieInfoViewSet(viewsets.ModelViewSet):
@@ -22,4 +19,4 @@ class MovieInfoViewSet(viewsets.ModelViewSet):
     queryset = MovieInfo.objects.all()
     serializer_class = MovieInfoSerializer
     filter_backends = (drf_filters.SearchFilter, filters.DjangoFilterBackend)
-    search_fields = ['production_companies', 'title', 'wiki_abstract']
+    search_fields = ["production_companies", "title", "wiki_abstract"]
