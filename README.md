@@ -7,6 +7,7 @@ This is a playground project to combine movies data with wiki info.
 - [Environment Setup](#environment-setup)
 - [Data Linking and Ingestion](#data-linking-and-ingestion)
 - [Query Data Using APIs](#query-data-using-restful-apis)
+- [Future Tasks](#future-tasks)
 
 ### Docker Setup
 
@@ -76,7 +77,7 @@ After the setup with data linking and ingestion, the linked movie data shall be 
     To improve the accuracy of mapping, additional methods to find exact match is needed.
 
 1. Parsing performance
-    
+
     When parsing the large XML file, only one tag object is read at one time thus it can reduce the memory load. 
     The tag object will be deleted once it has been read and processed.
     However, the current parser just used one process and thread to parse the large XML file, the performance can be
@@ -86,9 +87,8 @@ After the setup with data linking and ingestion, the linked movie data shall be 
     
     In this project, Django and Django RestFrameWork are used to provide APIs services. Its 
     Object-Relational Mapper is generic so that it supports different types of databases.
-    Also, building models and data ingestion are very quick to apply with Django.
-
-    Dockerization methods are applied to ease the deployment effort.
+    Also, building models and data ingestion are very quick to apply with Django. Dockerization 
+    methods are applied to ease the deployment effort.
 
     Now, only several GB scale data is being parsed. It will be an issue once the scale 
     of file raised to hundred or TB level. In such scenario, Hadoop can be applied with multiple nodes.
@@ -96,7 +96,7 @@ After the setup with data linking and ingestion, the linked movie data shall be 
     the meantime, MapReduce can be applied to process the files in parallel.
 
 1. Testing
-    
+
     Testing can be applied based on following aspects: 
     1. Check whether files are downloaded once a download command is initiated.
     1. Ensure the parsed CSV has its linking fields attached. 
