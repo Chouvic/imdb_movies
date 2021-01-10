@@ -1,3 +1,5 @@
+"""Movie data handler module."""
+
 import logging
 import xml.etree.ElementTree as ET
 
@@ -5,10 +7,20 @@ import pandas as pd
 from django.conf import settings
 from django.template.defaultfilters import slugify
 
+from .utils import parse_value
+
 logger = logging.getLogger("django")
 
+URL_TAG_NAME = 'url'
+TITLE_TAG_NAME = 'title'
+ABSTRACT_TAG_NAME = 'abstract'
 
-class MovieDataParse:
+
+class MovieDataHandle:
+    """This class handles CSV operations over IMDB data and WIKI XML file.
+
+    It can be used to extract information from a large XML to get abstract and link.
+    """
     _df = None
     _linking_result = None
 
@@ -21,32 +33,14 @@ class MovieDataParse:
             self._df = pd.read_csv(self.csv_path, encoding="utf-8")
         return self._df
 
-    @staticmethod
-    def parse_float(value):
-        try:
-            result = float(value)
-            return result
-        except ValueError:
-            return None
-
     def add_ratio(self):
-        """Calculate the ratio between budget and revenue.
-
-        @reviewer Another way is to convert all values to float and use default div in pandas
-        The following can preserve the information of inf(Recorded when divided by zero).
-
-        # df["budget"] = pd.to_numeric(df["budget"], errors='coerce', downcast="float")
-        # df["revenue"] = pd.to_numeric(df["revenue"], errors='coerce', downcast="float")
-        # df['budget_revenue_ratio'] = df.budget / df.revenue
-
-        However, the above approach needs to handle to_csv export as index
-        over NAN values is deprecated.
-
+        """Calculate the ratio between budget and revenue
+        and add the ratio as a column in the dataframe.
         """
 
         def calculate_ratio(row):
-            budget = self.parse_float(row.budget)
-            revenue = self.parse_float(row.revenue)
+            budget = parse_value(float, row.budget)
+            revenue = parse_value(float, row.revenue)
             if not budget or not revenue:
                 return None
             return budget / revenue if revenue != 0 else None
@@ -69,29 +63,37 @@ class MovieDataParse:
         }
 
     def match_link_and_abstract(self, xml_file_path):
-        """Match link and abstract of each movie."""
+        """Match link and abstract of each movie.
+
+        This method will match the movie with its wiki link and
+        abstract using a large XML.
+
+        To resolve the memory issue, it iterates through the tags
+        one by one and deletes the unnecessary tag object for fast performance.
+        """
         logger.info("Run XML parsing from %s.", xml_file_path)
         found = False
         pre_title = None
         context = ET.iterparse(xml_file_path)
         titles_mapping = self.titles_mapping
         for event, elem in context:
-            if elem.tag == "title":
+            if elem.tag == TITLE_TAG_NAME:
                 title = slugify(elem.text).replace("wikipedia-", "")
                 if title in titles_mapping:
                     found = True
                     pre_title = title
                 else:
                     found = False
-            if found and elem.tag == "url":
-                titles_mapping[pre_title]["url"] = elem.text
-            if found and elem.tag == "abstract":
-                titles_mapping[pre_title]["abstract"] = elem.text
+            if found and elem.tag == URL_TAG_NAME:
+                titles_mapping[pre_title][URL_TAG_NAME] = elem.text
+            if found and elem.tag == ABSTRACT_TAG_NAME:
+                titles_mapping[pre_title][ABSTRACT_TAG_NAME] = elem.text
             elem.clear()
         del context
         logger.info("XML parsing for %s completed.", xml_file_path)
 
         def serialize_format(mapping):
+            # transfer dict results to flat pandas DataFrame and clean data
             _result = pd.DataFrame.from_dict(mapping)
             result_df = _result.T
             result_df["_title"] = result_df.index
@@ -101,7 +103,7 @@ class MovieDataParse:
 
         return serialize_format(titles_mapping)
 
-    def run_match_and_combine(self, file_path):
+    def run_movie_matching(self, file_path):
         if self._linking_result is None:
             self._linking_result = self.match_link_and_abstract(file_path)
             self.add_ratio()
@@ -109,10 +111,7 @@ class MovieDataParse:
         return self._linking_result
 
     def combine_dfs(self, df2, columns):
-        combined_df = self.df.merge(df2, how="inner", on=columns)
-        combined_df_name = "movies_ratio_link.csv"
-        combined_df.to_csv(settings.DATASET_DIR + combined_df_name)
-        return combined_df
+        return self.df.merge(df2, how="inner", on=columns)
 
     @staticmethod
     def sorted_by_ratio(df, column, rows):
@@ -125,8 +124,6 @@ class MovieDataParse:
             df["release_date"], errors="coerce"
         )
         df.loc[:, "year"] = pd.DatetimeIndex(df["release_date"]).year
-        # df['release_date'] = pd.to_datetime(df['release_date'], errors='coerce')
-        # df['year'] = pd.DatetimeIndex(df['release_date']).year
         required_columns = [
             "title",
             "budget",
