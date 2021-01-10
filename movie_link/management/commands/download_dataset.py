@@ -1,5 +1,5 @@
 """
-Command to reset database to initial state.
+Command to download imdb dataset and xml file.
 """
 
 from django.core.management import BaseCommand

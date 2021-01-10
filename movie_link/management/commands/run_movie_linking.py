@@ -1,5 +1,5 @@
 """
-Command to reset database to initial state.
+Command to run the movie data linking and save results to CSV.
 """
 
 import time
