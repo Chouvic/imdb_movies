@@ -26,6 +26,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         csv_file_path = settings.DATASET_DIR + "clean_result_data.csv"
         df = pd.read_csv(csv_file_path)
+        # Fill NaN values with empty string to avoid out of range float issue
+        df = df.fillna('')
         logger.info('Movie data ingestion started using file %s.', csv_file_path)
         for _, row in df.iterrows():
             MovieInfo.objects.create(
