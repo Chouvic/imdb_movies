@@ -61,10 +61,10 @@ After the setup with data linking and ingestion, the linked movie data shall be 
 
 1. Search data
     Text or string fields are searchable.
-    Search format `/data/movies/?search=<search_str>`
+    Search format `/data/movies/?_search=<search_str>`
     
     Example: Search movies related to Disney.
-    `http://localhost:8000/data/movies/?search=disney`
+    `http://localhost:8000/data/movies/?_search=disney`
 
 
 ### Future tasks

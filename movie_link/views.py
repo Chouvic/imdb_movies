@@ -7,7 +7,15 @@ from .serializers import MovieInfoSerializer
 
 
 class MovieInfoFilter(filters.FilterSet):
-    _order = filters.OrderingFilter(fields='__all__')
+    _order = filters.OrderingFilter(
+        fields=(
+            ('budget', 'Budget'),
+            ('revenue', 'Revenue'),
+            ('rating', 'Average Rating'),
+            ('title', 'Title'),
+            ('year', 'Year'),
+        ),
+    )
 
     class Meta:
         model = MovieInfo
