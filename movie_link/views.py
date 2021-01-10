@@ -7,6 +7,8 @@ from .serializers import MovieInfoSerializer
 
 
 class MovieInfoFilter(filters.FilterSet):
+    _order = filters.OrderingFilter(fields='__all__')
+
     class Meta:
         model = MovieInfo
         fields = "__all__"
