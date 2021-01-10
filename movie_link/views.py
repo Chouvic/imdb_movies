@@ -9,13 +9,16 @@ from .serializers import MovieInfoSerializer
 class MovieInfoFilter(filters.FilterSet):
     _order = filters.OrderingFilter(
         fields=(
-            ('budget', 'Budget'),
-            ('revenue', 'Revenue'),
-            ('rating', 'Average Rating'),
-            ('ratio', 'Budget to revenue ratio'),
-            ('title', 'Title'),
-            ('year', 'Year'),
+            ('budget', 'budget'),
+            ('revenue', 'revenue'),
+            ('rating', ' rating'),
+            ('ratio', 'ratio'),
+            ('title', 'title'),
+            ('year', 'year'),
         ),
+        field_labels={
+            'ratio': 'Budget to revenue ratio.',
+        }
     )
 
     class Meta:
