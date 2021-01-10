@@ -1,9 +1,6 @@
 from django.db import models
 
 
-# Create your models here.
-
-
 class MovieInfo(models.Model):
     budget = models.FloatField(blank=True, null=True)
     production_companies = models.TextField(blank=True, null=True)
