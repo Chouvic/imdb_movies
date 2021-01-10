@@ -12,6 +12,7 @@ class MovieInfoFilter(filters.FilterSet):
             ('budget', 'Budget'),
             ('revenue', 'Revenue'),
             ('rating', 'Average Rating'),
+            ('ratio', 'Budget to revenue ratio'),
             ('title', 'Title'),
             ('year', 'Year'),
         ),

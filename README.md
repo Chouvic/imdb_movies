@@ -50,7 +50,8 @@ After the setup with data linking and ingestion, the linked movie data shall be 
 
 1. Query data using APIs
     Go to `http://localhost:8000/data/movies/` to see a list of movie data
-1. Filter data
+
+1. Filter movies
     The following fields can be used as url query to filter the list
     `budget, production_companies, revenue, rating, ratio, title, wiki_url, wiki_abstract, year`
     
@@ -59,12 +60,21 @@ After the setup with data linking and ingestion, the linked movie data shall be 
     Example: Query all movies rated 7.7.
     `http://localhost:8000/data/movies/?rating=7.7`
 
-1. Search data
+1. Search movies
     Text or string fields are searchable.
     Search format `/data/movies/?_search=<search_str>`
     
     Example: Search movies related to Disney.
     `http://localhost:8000/data/movies/?_search=disney`
+
+1. Order movies
+    The following fields can be used as url query to order the movie list
+    `budget, revenue, rating, ratio, title, year`
+    
+    Order format `/data/movies/?_order=(-?)<order_field>`
+
+    Example: Order movies by ratio(Descending).
+    `http://localhost:8000/data/movies/?_order=-ratio`
 
 
 ### Future tasks
