@@ -1,65 +1,66 @@
 This is a playground project to combine movies data with wiki info.
 ---------------------
 
- * Introduction
- * How to use
- * Recommended modules
- 
- 
-INTRODUCTION
-------------
+### Contents
 
-This is a need to match the movies data with wiki pages information.
+- [Docker Setup](#docker-setup)
+- [Environment Setup](#environment-setup)
+- [Data Linking and Ingestion](#data-linking-and-ingestion)
+- [Query Data Using APIs](#query-data-using-restful-apis)
 
-How to use
-------------
-
-
-### Development Setup
+### Docker Setup
 
 Instructions: 
-1. Install python3
 1. Install [Docker](https://docs.docker.com/get-docker/)
 1. Install [Docker Compose](https://docs.docker.com/compose/install/)
 
 ### Environment setup:
-1. Start a virtual environment
+1. Build docker
     ```
-    python3 -m venv venv/
+    docker-compose build
     ```
-1. Activate the virtual environment
+1. Run docker service
     ```
-    source venv/bin/activate
-    ```
-1. Install required packages
-    ```
-    pip install -r requirements.txt
-    ```
-1. Run Django migration to set up database schema
-    ```
-    python manage.py migrate
+    docker-compose up -d
     ```
 
 ### Data linking and ingestion
 
+1. Run command to do Django migration to set up database schema
+    ```
+    docker-compose exec web python manage.py migrate
+    ```
 1. Run command to download movie and WIKI datasets
     ```
-    python manage.py download_dataset
+    docker-compose exec web python manage.py download_dataset
     ```
 1. Run command to link movie with WIKI URL and abstract
     ```
-    python manage.py run_movie_linking
+    docker-compose exec web python manage.py run_movie_linking
     ```
 1. Run command to ingestion data to database
     ```
-    python manage.py movie_ingestion
+    docker-compose exec web python manage.py movie_ingestion
     ```
 
-### Start the DEV server and query data
+### Query data using RESTFul APIs
 
-1. Start DEV server
-    ```
-    python manage.py runserver
-    ```
+After the setup with data linking and ingestion, the linked movie data shall be populated to the postgres database.
+
 1. Query data using APIs
-    Go to `localhost:8000` to see a list of movie data
+    Go to `http://localhost:8000/data/movies/` to see a list of movie data
+1. Filter data
+    The following fields can be used as url query to filter the list
+    `budget, production_companies, revenue, rating, ratio, title, wiki_url, wiki_abstract, year`
+    
+    Query format: `/data/movies/?foo_field=<field_value>`
+    
+    Example: Query all movies rated 7.7.
+    `http://localhost:8000/data/movies/?rating=7.7`
+
+1. Search data
+    Text or string fields are searchable.
+    Search format `/data/movies/?search=<search_str>`
+    
+    Example: Search movies related to Disney.
+    `http://localhost:8000/data/movies/?search=disney`
