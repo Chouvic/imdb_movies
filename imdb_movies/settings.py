@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'imdb_movies',
         'USER': 'test_user',
         'PASSWORD': 'test',
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
