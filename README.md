@@ -12,8 +12,8 @@ This is a playground project to combine movies data with wiki info.
 ### Docker Setup
 
 Instructions: 
-1. Install [Docker](https://docs.docker.com/get-docker/)
-1. Install [Docker Compose](https://docs.docker.com/compose/install/)
+1. Install [Docker](https://docs.docker.com/get-docker/) Tested Version: 19.03.14
+1. Install [Docker Compose](https://docs.docker.com/compose/install/) Tested Version 1.27.4
 
 ### Environment setup:
 1. Build docker
